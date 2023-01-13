@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd" >
+
+<suite name="XREF CSS Selector Sample Suite" verbose="1" >
+
+    <test name="XREF Testcases">
+        <classes>
+            <class name="com.tests.LoginTests">
+                <methods>
+                    <include name = "goodLoginTest"/>
+                </methods>
+            </class>
+            <class name="com.tests.ProductSortingTests"/>
+        </classes>
+    </test> <!-- end XREF Testcases -->
+</suite> <!-- end XREF CSS Selector Sample Suit -->

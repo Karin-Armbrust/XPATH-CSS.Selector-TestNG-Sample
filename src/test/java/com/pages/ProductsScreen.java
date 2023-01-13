@@ -12,10 +12,10 @@ import java.util.List;
 public class ProductsScreen {
     public final static By heading =
             By.xpath("//div[contains(@Class, 'header_secondary_container')]/span[contains(@Class, 'title')]");
-
     public final static By productPrices =
-            By.xpath("//div[@class='inventory_list']//div[@class='pricebar']//div[@class='inventory_item_price']");
-
+            By.xpath("//div[@class='inventory_list']//div[@class='inventory_item_price']");
+    public final static By productNames =
+            By.xpath("//div[@class='inventory_list']//div[@class='inventory_item_name']");
     public final static By sortDropdown =
             By.xpath("//select[@class='product_sort_container']");
 
@@ -25,61 +25,84 @@ public class ProductsScreen {
         this.driver = driver;
     }
 
+    // This method gets the title/header of the Products page
     public String getHeaderText() {
         return new WebDriverWait(driver, 10)
                 .until(ExpectedConditions.presenceOfElementLocated(heading)).getText();
     }
 
-    public boolean testPricesLowToHigh() {
+    // this method takes in the sort and verifies that it's sorted correctly
+    public boolean testPrices(String sortBy) {
+        // Get the list of Prices
         List<WebElement> priceList= new WebDriverWait(driver, 10)
                 .until(ExpectedConditions.presenceOfAllElementsLocatedBy(productPrices));
+        // Set up variables
         boolean listSorted = true;
         float currentPrice = new Float(0.0);
+        // for each Price
         for (WebElement price:priceList) {
-            //String currentPrice = new String(price.getText());
-            //int lengthPrice = Integer.parseInt(currentPrice)
+            // Get the price from the string
             float convertedPrice = Float.parseFloat(price.getText().substring(1));
-            if (convertedPrice < currentPrice) {
-                listSorted = false;
-            }
-            System.out.println(convertedPrice);
-        }
-        return listSorted;
-    }
-
-    public boolean testPricesHighToLow() {
-        List<WebElement> priceList= new WebDriverWait(driver, 10)
-                .until(ExpectedConditions.presenceOfAllElementsLocatedBy(productPrices));
-        boolean listSorted = true;
-        float currentPrice = new Float(0.0);
-        for (WebElement price:priceList) {
-            //String currentPrice = new String(price.getText());
-            //int lengthPrice = Integer.parseInt(currentPrice)
-            float convertedPrice = Float.parseFloat(price.getText().substring(1));
-            if (currentPrice == 0.0) {
-                currentPrice = convertedPrice;
-            }
-            if (convertedPrice > currentPrice) {
-                listSorted = false;
-            }
-            System.out.println(convertedPrice);
+            if (sortBy.equals("lohi")) {   // if sorted low to high
+                if (convertedPrice < currentPrice) {
+                    listSorted = false;
+                }
+            } else {  // if sorted high to low
+                // if currentPrice is 0 then go onto the next price after
+                // setting currentPrice to the convertedPrice
+                if (currentPrice != 0.0) {
+                    if (convertedPrice > currentPrice) {
+                        listSorted = false;
+                    }
+                }
+             }
             currentPrice = convertedPrice;
+            System.out.println(convertedPrice);
         }
         return listSorted;
+
     }
 
-    public void selectSortLowToHigh() {
+    // This method tests that the Products are sorted alphabetically
+    public boolean testNames(String sortBy) {
+        // Get all the Product Names
+        List<WebElement> nameList= new WebDriverWait(driver, 10)
+                .until(ExpectedConditions.presenceOfAllElementsLocatedBy(productNames));
+        // Set up variables for test
+        boolean listSorted = true;
+        String currentName = new String("initial");
+        // For each Name
+        for (WebElement name:nameList) {
+            // If it's the first name, go onto the next
+            if (currentName.compareTo("initial") == 0 ) {
+                System.out.println("Inside initial");
+
+            } else if (sortBy.equals("az")) {  // If sorted low to high
+                if (name.getText().compareTo(currentName) < 0) {
+                    System.out.println(name.getText() + " - " + currentName + " - " + (name.getText().compareTo(currentName) > 0) );
+                    listSorted = false;
+                }
+            } else {  // if sorted high to low
+                if (name.getText().compareTo(currentName) > 0) {
+                    System.out.println(name.getText() + " - " + currentName + " - " + (name.getText().compareTo(currentName) > 0) );
+                    listSorted = false;
+                }
+            }
+            // set the currentName so I can check the next name
+            currentName = name.getText();
+            System.out.println(name.getText());
+        }
+        return listSorted;
+
+    }
+    // This method sorts the Products
+    public void selectSort(String sortBy) {
         WebElement dropdownList = new WebDriverWait(driver, 10)
                 .until(ExpectedConditions.elementToBeClickable(sortDropdown));
         final Select selectOption = new Select(dropdownList);
-        selectOption.selectByValue("lohi");
+        selectOption.selectByValue(sortBy);
     }
 
-    public void selectSortHighToLow() {
-        WebElement dropdownList = new WebDriverWait(driver, 10)
-                .until(ExpectedConditions.elementToBeClickable(sortDropdown));
-        final Select selectOption = new Select(dropdownList);
-        selectOption.selectByValue("hilo");
-    }
+
 
 }
