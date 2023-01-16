@@ -1,5 +1,6 @@
 package com.tests;
 
+import com.data.LoginData;
 import com.pages.LoginPage;
 import com.pages.ProductsScreen;
 import io.github.bonigarcia.wdm.WebDriverManager;
@@ -8,15 +9,11 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.testng.annotations.*;
 
+import static org.apache.commons.lang3.StringUtils.substring;
+
 @Test
 public class LoginTests {
     WebDriver driver;
-
-    String userName = new String("standard_user");
-    String passWord = new String ("secret_sauce");
-
-    String badUserName = new String("bad_user");
-    String badPassWord = new String ("bad_sauce");
 
     @BeforeMethod
     public void setupTest() {
@@ -26,17 +23,28 @@ public class LoginTests {
     }
 
 
-    // Log into the site and go directly to the Products Screen
-    public void goodLoginTest() {
+    // Using a set of data run login tests
+    // One good login - Log into the site and go directly to the Products Screen
+    @Test(dataProvider="login-provider", dataProviderClass = LoginData.class)
+    public void loginTests(String userName, String passWord, Boolean expectedPassed ) {
         LoginPage lpage = new LoginPage(driver);
         lpage.logIntoSite(userName, passWord);
         ProductsScreen ppage = new ProductsScreen(driver);
-        Assert.assertEquals("PRODUCTS", ppage.getHeaderText());
+
+        if (expectedPassed){
+            Assert.assertEquals("PRODUCTS", ppage.getHeaderText());
+            ppage.logout();
+        } else { // if expected to fail
+            Assert.assertEquals("Epic sadface",
+                    substring(lpage.getErrorMsg(),0,12));
+
+        }
     }
 
     @AfterMethod
     public void closeDriver() {
         driver.quit();
     }
+
 
 }
