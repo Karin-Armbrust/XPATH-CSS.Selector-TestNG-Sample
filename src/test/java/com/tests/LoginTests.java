@@ -7,19 +7,38 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 import junit.framework.Assert;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.edge.EdgeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
 import org.testng.annotations.*;
 
 import static org.apache.commons.lang3.StringUtils.substring;
 
+// NOTE: This test Suite needs to be run from testngLogin.xml
 @Test
 public class LoginTests {
     WebDriver driver;
 
     @BeforeMethod
-    public void setupTest() {
-        WebDriverManager.chromedriver().setup();
-        driver = new ChromeDriver();
-        driver.get("https://www.saucedemo.com/");
+    @Parameters({"URL", "BrowserType"})
+    public void setupTest(String url, String browserType) {
+        // Run each test on the different browsers
+        if (browserType.equalsIgnoreCase("Chrome")) {
+            WebDriverManager.chromedriver().setup();
+            driver = new ChromeDriver();
+        }
+        else if (browserType.equalsIgnoreCase("Internet Explorer"))
+        {
+            WebDriverManager.edgedriver().setup();
+            driver = new EdgeDriver();
+        }
+        else if (browserType.equalsIgnoreCase("Firefox"))
+        {
+            //System.setProperty("webdriver.gecko.driver", "C:\\QA-Tools\\drivers\\geckodriver.exe");
+            WebDriverManager.firefoxdriver().setup();
+            driver = new FirefoxDriver();
+        }
+
+        driver.get(url);
     }
 
 
