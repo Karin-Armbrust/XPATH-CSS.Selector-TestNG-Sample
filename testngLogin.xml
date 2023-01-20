@@ -7,6 +7,9 @@
         <parameter name="BrowserType" value="Internet Explorer"/>
         <classes>
             <class name="com.tests.LoginTests">
+                <methods>
+                    <exclude name="goodLoginTest"/>
+                </methods>
             </class>
         </classes>
     </test> <!-- end Internet Explorer Testcases -->
@@ -14,14 +17,20 @@
         <parameter name="BrowserType" value="Chrome"/>
         <classes>
             <class name="com.tests.LoginTests">
+                <methods>
+                    <exclude name="goodLoginTest"/>
+                </methods>
             </class>
         </classes>
     </test> <!-- end Chrome Testcases -->
     <test name="Firefox Testcases">
-         <parameter name="BrowserType" value="Firefox"/>
-            <classes>
-                <class name="com.tests.LoginTests">
-                </class>
-            </classes>
+        <parameter name="BrowserType" value="Firefox"/>
+        <classes>
+            <class name="com.tests.LoginTests">
+                <methods>
+                    <exclude name="goodLoginTest"/>
+                </methods>
+            </class>
+        </classes>
     </test> <!-- end Firefox Testcases -->
 </suite> <!-- end Browser Testing Sample Suit -->

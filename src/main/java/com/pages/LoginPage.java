@@ -33,16 +33,11 @@ public class LoginPage {
         password.sendKeys(pword);
     }
 
-    public void clickLoginButton() {
+    public ProductsScreen clickLoginButton() {
         WebElement loginbutton = new WebDriverWait(driver, Duration.ofSeconds(10))
                 .until(ExpectedConditions.presenceOfElementLocated(loginButton));
         loginbutton.click();
-    }
-
-    public void logIntoSite(String uname, String pword) {
-        setUserName(uname);
-        setPassword(pword);
-        clickLoginButton();
+        return new ProductsScreen(driver);
     }
 
     // This method gets the title/header of the Products page
