@@ -7,10 +7,11 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import com.pages.WaitTillReady;
 import java.time.Duration;
 import java.util.List;
 
-public class ProductsScreen {
+public class ProductsScreen  {
     public final static By heading =
             By.xpath("//div[contains(@Class, 'header_secondary_container')]/span[contains(@Class, 'title')]");
     public final static By productPrices =
@@ -33,18 +34,18 @@ public class ProductsScreen {
 
     // This method gets the title/header of the Products page
     public String getHeaderText() {
-        return new WebDriverWait(driver, Duration.ofSeconds(10))
-                .until(ExpectedConditions.presenceOfElementLocated(heading)).getText();
+        return getElement(heading).getText();
     }
 
     // this method takes in the sort and verifies that it's sorted correctly
     public boolean testPrices(String sortBy) {
         // Get the list of Prices
-        List<WebElement> priceList= new WebDriverWait(driver, Duration.ofSeconds(10))
-                .until(ExpectedConditions.presenceOfAllElementsLocatedBy(productPrices));
+        List<WebElement> priceList = getElementList(productPrices);
+
         // Set up variables
         boolean listSorted = true;
         float currentPrice = new Float(0.0);
+
         // for each Price
         for (WebElement price:priceList) {
             // Get the price from the string
@@ -72,11 +73,12 @@ public class ProductsScreen {
     // This method tests that the Products are sorted alphabetically
     public boolean testNames(String sortBy) {
         // Get all the Product Names
-        List<WebElement> nameList= new WebDriverWait(driver, Duration.ofSeconds(10))
-                .until(ExpectedConditions.presenceOfAllElementsLocatedBy(productNames));
+        List<WebElement> nameList = getElementList(productNames);
+
         // Set up variables for test
         boolean listSorted = true;
         String currentName = new String("initial");
+
         // For each Name
         for (WebElement name:nameList) {
             // If it's the first name, go onto the next
@@ -94,6 +96,7 @@ public class ProductsScreen {
                     listSorted = false;
                 }
             }
+
             // set the currentName so I can check the next name
             currentName = name.getText();
             System.out.println(name.getText());
@@ -103,16 +106,14 @@ public class ProductsScreen {
     }
     // This method sorts the Products
     public void selectSort(String sortBy) {
-        WebElement dropdownList = new WebDriverWait(driver, Duration.ofSeconds(10))
-                .until(ExpectedConditions.elementToBeClickable(sortDropdown));
+        WebElement dropdownList = getElement(sortDropdown);
         final Select selectOption = new Select(dropdownList);
         selectOption.selectByValue(sortBy);
     }
 
     // Add all Products to the cart using the Add To Cart Button
     public void addProductsToCart(int numInCart) {
-        List<WebElement> addToCartButtons = new WebDriverWait(driver, Duration.ofSeconds(10))
-                .until(ExpectedConditions.presenceOfAllElementsLocatedBy(productAddToCartButtons));
+        List<WebElement> addToCartButtons = getElementList(productAddToCartButtons);
         int nextNum = 0;
         for (WebElement button:addToCartButtons) {
             nextNum++;
@@ -123,14 +124,24 @@ public class ProductsScreen {
 
     }
 
-
-    public int getItemsInCart() {
-        WebElement cart = new WebDriverWait(driver, Duration.ofSeconds(10))
-                .until(ExpectedConditions.elementToBeClickable(shoppingCartButton));
+    // Method to return the number of items in the cart
+    public int getNumberItemsInCart() {
+        WebElement cart = getElement(shoppingCartButton);
         return Integer.parseInt(cart.getText());
 
     }
+    // Method to get the WebElement usina a Wait
+    public WebElement getElement(By locator) {
+        return new WebDriverWait(driver, Duration.ofSeconds(10))
+                .until(ExpectedConditions.presenceOfElementLocated(locator));
+    }
 
+    // Method to get a List of WebElement Objects using a Wait
+    public List<WebElement> getElementList(By locator) {
+        List<WebElement> newElements = new WebDriverWait(driver, Duration.ofSeconds(10))
+                .until(ExpectedConditions.presenceOfAllElementsLocatedBy(locator));
+        return newElements;
+    }
     public void logout() {
         // TODO
     }

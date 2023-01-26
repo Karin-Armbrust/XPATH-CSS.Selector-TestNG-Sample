@@ -21,28 +21,34 @@ public class LoginPage {
         this.driver = driver;
     }
 
+    // Enter the Username
     public void setUserName(String uname) {
-        WebElement username = new WebDriverWait(driver, Duration.ofSeconds(10))
-                .until(ExpectedConditions.presenceOfElementLocated(userName));
+        WebElement username = getElement(userName);
         username.sendKeys(uname);
     }
 
+    // Enter the Password
     public void setPassword(String pword) {
-        WebElement password = new WebDriverWait(driver, Duration.ofSeconds(10))
-                .until(ExpectedConditions.presenceOfElementLocated(passWord));
+        WebElement password = getElement(passWord);
         password.sendKeys(pword);
     }
 
+    // Click the login button
     public ProductsScreen clickLoginButton() {
-        WebElement loginbutton = new WebDriverWait(driver, Duration.ofSeconds(10))
-                .until(ExpectedConditions.presenceOfElementLocated(loginButton));
+        WebElement loginbutton = getElement(loginButton);
         loginbutton.click();
         return new ProductsScreen(driver);
     }
 
     // This method gets the title/header of the Products page
     public String getErrorMsg() {
-        return new WebDriverWait(driver, Duration.ofSeconds(10))
-                .until(ExpectedConditions.presenceOfElementLocated(errorMsg)).getText();
+        return getElement(errorMsg).getText();
+    }
+
+    // Method to get the WebElement usina a Wait
+    public WebElement getElement(By locator) {
+        WebElement newElement = new WebDriverWait(driver, Duration.ofSeconds(10))
+                .until(ExpectedConditions.presenceOfElementLocated(locator));
+        return newElement;
     }
 }
